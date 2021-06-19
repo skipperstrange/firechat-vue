@@ -1,10 +1,16 @@
 <template>
   <div id="app">
-    <!--div id="nav">
+    <!--div-- id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </!--div-->
-    <router-view />
+    <transition
+      mode="out-in"
+      enter-active-class="animate__animated animate__fadeIn"
+      leave-active-class="animate__animated animate__fadeOut"
+    >
+      <router-view />
+    </transition>
   </div>
 </template>
 

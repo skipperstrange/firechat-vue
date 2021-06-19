@@ -10,11 +10,17 @@
             <div class="container">
               <div class="row">
                 <div class="col-lg-10 col-xl-7 mx-auto">
-                  <div class="login">
+                  <div v-if="loginView" class="login">
                     <Login />
+                    Dont have an account?
+                    <a href="#" @click="loginView = !loginView">Register</a>
                   </div>
 
-                  <div class="register"></div>
+                  <div v-if="!loginView" class="register">
+                    <Register />
+                    Already a member?
+                    <a href="#" @click="loginView = !loginView">Sign In</a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -28,11 +34,13 @@
 <script>
 // @ is an alias to /src
 import Login from "@/components/Login.vue";
+import Register from "@/components/Register.vue";
 
 export default {
   name: "Auth",
   components: {
     Login,
+    Register,
   },
 
   data: () => {

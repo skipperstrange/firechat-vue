@@ -3,14 +3,23 @@
     <h3 class="display-4">Come on in!</h3>
     <p class="text-muted mb-4">Please login to chat with members</p>
 
-    <FormulateForm v-model="formValues" @submit="login">
+    <FormulateForm v-model="formValues" @submit="signup">
       <div class="mb-3">
         <FormulateInput
           name="email"
           type="email"
           label=""
-          validation="required|email"
+          validation="bail|required|email"
           placeholder="Email address"
+        />
+      </div>
+      <div class="mb-3">
+        <FormulateInput
+          name="username"
+          type="text"
+          label=""
+          validation="required"
+          placeholder="Username"
         />
       </div>
       <div class="mb-3">
@@ -18,13 +27,13 @@
           name="password"
           type="password"
           label=""
-          validation="required"
+          validation="bail|required|min:6"
           placeholder="Password"
         />
       </div>
 
       <div class="mb-3">
-        <FormulateInput type="submit" label="Sign In" />
+        <FormulateInput type="submit" label="Sign Up" />
       </div>
     </FormulateForm>
   </div>
@@ -32,7 +41,7 @@
 
 <script>
 export default {
-  name: "Login",
+  name: "Register",
   data: () => {
     return {
       formValues: {},
@@ -42,7 +51,7 @@ export default {
   components: {},
 
   methods: {
-    login() {
+    signup() {
       console.log(this.formValues.email);
     },
   },
