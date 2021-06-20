@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row no-gutter">
         <div class="col-md-6 d-none d-md-flex bg-image">
-          <img src="../assets/udrawMLife.svg" alt="Login" />
+          <img src="../assets/img/udrawMLife.svg" alt="Login" />
         </div>
         <div class="col-md-6 bg-light">
           <div class="login d-flex align-items-center py-5">
@@ -54,7 +54,7 @@ export default {
 <style>
 .login,
 .image {
-  min-height: 100vh;
+  min-height: 100%;
 }
 .bg-image img {
   height: 48vh;

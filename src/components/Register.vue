@@ -40,19 +40,57 @@
 </template>
 
 <script>
+import firebase from "firebase";
+
 export default {
   name: "Register",
   data: () => {
     return {
       formValues: {},
+      loading: false,
     };
   },
 
-  components: {},
-
   methods: {
-    signup() {
-      console.log(this.formValues.email);
+    async signup() {
+      await firebase
+        .auth()
+        .createUserWithEmailAndPassword(
+          this.formValues.email,
+          this.formValues.password
+        )
+        .then(() => {
+          let user = firebase.auth().currentUser;
+          const newAccount = {
+            email: this.formValues.email,
+            username: this.formValues.username,
+            created: new Date(),
+            photoUrl:
+              "https://cdn0.iconfinder.com/data/icons/multimedia-solid-30px/30/user_account_profile-512.png",
+          };
+
+          firebase
+            .database()
+            .ref("accounts/" + user.uid)
+            .push(newAccount)
+            .then(() => {
+              firebase
+                .auth()
+                .signInWithEmailAndPassword(
+                  this.formValues.email,
+                  this.formValues.password
+                )
+                .then(() => {
+                  this.$router.replace({ name: "Chat" });
+                })
+                .catch((err) => {
+                  console.log = err.message;
+                });
+            });
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
     },
   },
 };

@@ -9,7 +9,7 @@
           name="email"
           type="email"
           label=""
-          validation="required|email"
+          validation="bail|required|email"
           placeholder="Email address"
         />
       </div>
@@ -31,6 +31,8 @@
 </template>
 
 <script>
+import firebase from "firebase";
+
 export default {
   name: "Login",
   data: () => {
@@ -43,7 +45,19 @@ export default {
 
   methods: {
     login() {
-      console.log(this.formValues.email);
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(
+          this.formValues.email,
+          this.formValues.password
+        )
+        .then(() => {
+          this.$router.replace({ name: "Chat" });
+        })
+        .catch((err) => {
+          console.log(err.message);
+          this.error = err.message;
+        });
     },
   },
 };
