@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h3 class="display-4">Come on in!</h3>
-    <p class="text-muted mb-4">Please login to chat with members</p>
+    <h3 class="display-4">Sign Up!!</h3>
+    <p class="text-muted mb-4">You can also register to get started.</p>
 
     <FormulateForm v-model="formValues" @submit="signup">
       <div class="mb-3">
@@ -62,17 +62,23 @@ export default {
         .then(() => {
           let user = firebase.auth().currentUser;
           const newAccount = {
+            userid: user.uid,
             email: this.formValues.email,
-            username: this.formValues.username,
-            created: new Date(),
-            photoUrl:
+            displayName: this.formValues.username,
+            createdAt: firebase.firestore.Timestamp.fromDate(
+              new Date()
+            ).toDate(),
+            lastSeen: firebase.firestore.Timestamp.fromDate(
+              new Date()
+            ).toDate(),
+            photoURL:
               "https://cdn0.iconfinder.com/data/icons/multimedia-solid-30px/30/user_account_profile-512.png",
+            status: "online",
           };
-
           firebase
             .database()
             .ref("accounts/" + user.uid)
-            .push(newAccount)
+            .set(newAccount)
             .then(() => {
               firebase
                 .auth()
@@ -81,15 +87,20 @@ export default {
                   this.formValues.password
                 )
                 .then(() => {
+                  this.$toasted
+                    .success(
+                      "Thanks for signing up! Please wait to enter chat room."
+                    )
+                    .goAway(5000);
                   this.$router.replace({ name: "Chat" });
                 })
                 .catch((err) => {
-                  console.log = err.message;
+                  this.$toasted.show(err.message).goAway(5000);
                 });
             });
         })
         .catch((err) => {
-          console.log(err.message);
+          this.$toasted.info(err.message).goAway(5000);
         });
     },
   },

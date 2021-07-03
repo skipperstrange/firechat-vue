@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="display-4">Come on in!</h3>
+    <h3 class="display-4">Come in!</h3>
     <p class="text-muted mb-4">Please login to chat with members</p>
 
     <FormulateForm v-model="formValues" @submit="login">
@@ -44,19 +44,23 @@ export default {
   components: {},
 
   methods: {
-    login() {
-      firebase
+    async login() {
+      await firebase
         .auth()
         .signInWithEmailAndPassword(
           this.formValues.email,
           this.formValues.password
         )
         .then(() => {
-          this.$router.replace({ name: "Chat" });
+          this.$store.dispatch("authCheck").then(() => {
+            this.$toasted
+              .success("Please wait to enter chat room.")
+              .goAway(5000);
+            this.$router.push({ name: "Home" });
+          });
         })
         .catch((err) => {
-          console.log(err.message);
-          this.error = err.message;
+          this.$toasted.error(err.message).goAway(5000);
         });
     },
   },

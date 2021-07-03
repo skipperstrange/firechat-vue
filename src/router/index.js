@@ -2,6 +2,8 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Chat from "../views/Chat.vue";
+import Auth from "@/components/Auth.vue";
+import store from "../store/index.js";
 
 Vue.use(VueRouter);
 
@@ -14,13 +16,18 @@ const routes = [
     path: "/home",
     name: "Home",
     component: Home,
+    beforeEnter: (to, from, next) => {
+      if (store.getters.user.loggedIn === false) {
+        next();
+      } else {
+        next("/");
+      }
+    },
   },
   {
     path: "/about",
     name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/About.vue"),
   },
@@ -28,17 +35,40 @@ const routes = [
     path: "/",
     name: "Chat",
     component: Chat,
+    beforeEnter: (to, from, next) => {
+      if (store.getters.user.loggedIn === false) {
+        next("/home");
+      } else {
+        next();
+      }
+    },
   },
   {
     path: "/auth",
     name: "Auth",
-    // route level code-splitting
-    // this generates a separate chunk (login.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "login" */ "../views/Auth.vue"),
+    component: Auth,
+    beforeEnter: (to, from, next) => {
+      if (store.getters.user.loggedIn === false) {
+        next();
+      } else {
+        next("/");
+      }
+    },
+  },
+
+  {
+    path: "*",
+    component: () => import("../views/missing.vue"),
   },
 ];
+
+// Always leave this as last one
+if (process.env.MODE !== "ssr") {
+  routes.push({
+    path: "*",
+    component: () => import("../views/missing.vue"),
+  });
+}
 
 const router = new VueRouter({
   routes,

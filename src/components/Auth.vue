@@ -1,11 +1,11 @@
 <template>
-  <div class="auth-page">
-    <div class="container-fluid">
+  <div id="frame" class="auth-page">
+    <div class="container">
       <div class="row no-gutter">
-        <div class="col-md-6 d-none d-md-flex bg-image">
+        <div class="col-lg-6 d-mlg-flex bg-image md-hidden">
           <img src="../assets/img/udrawMLife.svg" alt="Login" />
         </div>
-        <div class="col-md-6 bg-light">
+        <div class="col-md-6 pane">
           <div class="login d-flex align-items-center py-5">
             <div class="container">
               <div class="row">
@@ -35,6 +35,7 @@
 // @ is an alias to /src
 import Login from "@/components/Login.vue";
 import Register from "@/components/Register.vue";
+import { eventBus } from "../main";
 
 export default {
   name: "Auth",
@@ -48,16 +49,33 @@ export default {
       loginView: true,
     };
   },
+
+  mounted() {
+    if (this.$route.query.loginState === "reg") {
+      this.loginView = false;
+    }
+  },
+
+  created() {
+    eventBus.$on("loggedout", () => {
+      this.$store.dispatch("logout");
+      this.$router.replace({ name: "Home" });
+    });
+  },
 };
 </script>
 
 <style>
-.login,
+.pane {
+  background: #fff;
+  height: 100vh;
+}
+
 .image {
   min-height: 100%;
 }
 .bg-image img {
-  height: 48vh;
+  height: 30vh;
   margin: 30vh auto;
 }
 
