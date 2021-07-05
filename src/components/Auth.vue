@@ -2,13 +2,12 @@
   <div id="frame" class="auth-page">
     <div class="container">
       <div class="row no-gutter">
-        <div class="col-lg-6 d-mlg-flex bg-image md-hidden">
+        <div class="col-lg-6 col-lg-4 bg-image d-lg-block d-sm-none d-none">
           <img src="../assets/img/udrawMLife.svg" alt="Login" />
         </div>
-        <div class="col-md-6 pane">
+        <div class="col-lg-6 pane">
           <div class="login d-flex align-items-center py-5">
             <div class="container">
-              <div class="row">
                 <div class="col-lg-10 col-xl-7 mx-auto">
                   <div v-if="loginView" class="login">
                     <Login />
@@ -23,7 +22,6 @@
                   </div>
                 </div>
               </div>
-            </div>
           </div>
         </div>
       </div>

@@ -22,7 +22,11 @@
     </div>
     <div id="search">
       <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-      <input type="text" placeholder="Search contacts..."  v-model="searchString" />
+      <input
+        type="text"
+        placeholder="Search contacts..."
+        v-model="searchString"
+      />
     </div>
     <div id="contacts">
       <ul
@@ -41,6 +45,7 @@
           :class="{ active: selectedId === contact.uid }"
           style="border-bottom: #32465a 1px solid"
           @click="setCurrentChatBuddy(contact)"
+          :title="contact.displayName"
         >
           <div class="wrap">
             <span :class="'contact-status ' + contact.status"></span>
@@ -60,30 +65,37 @@
         <i class="fa fa-sign-out fa-fw" aria-hidden="true"></i>
         <span> <a @click="logout" class="">Logout</a></span>
       </button>
-      <!--button id="settings">
-        <i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span>
-      </button-->
+      <button id="settings" v-if="!blockedView"  @click="toggleBlockedView()">
+        <i class="fa fa-ban fa-fw" aria-hidden="true"></i> <span>Blocked</span>
+      </button>
+      <button id="settings" v-if="blockedView" @click="toggleBlockedView()">
+        <i class="fa fa-users fa-fw" aria-hidden="true"></i> <span>Contacts</span>
+      </button>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 import { eventBus } from "../main";
 import firebase from "firebase/app";
 
 export default {
   name: "UsersList",
-  props: {
-    user: {},
-    contacts: [],
-  },
+  props: {},
 
   data: () => {
     return {
       formValue: {},
       status: true,
       selectedId: String,
-      searchString: ''
+      searchString: "",
+      contactsSegregated: {
+        blocked: [],
+        unblocked:[]
+      },
+      blockedView: false,
+      isBlockedContact: null
     };
   },
 
@@ -93,8 +105,12 @@ export default {
       eventBus.$emit("buddySelected", buddy);
     },
 
-    async logout() {
-      await firebase
+    toggleBlockedView(){
+      this.blockedView = !this.blockedView
+    },
+
+     logout() {
+       firebase
         .database()
         .ref("accounts/" + this.user.data.uid)
         .update({
@@ -115,25 +131,63 @@ export default {
           console.log(e);
         });
     },
+
+    async segregateContacts() {
+      let blockedArray = Object.values(this.blockedContacts);
+      let blocked = []
+      let unblocked = []
+      this.contacts.forEach(function (profile) {
+        if (blockedArray.includes(profile.uid)) {
+         profile.blocked = true
+         blocked.push(profile);
+        } else {
+        profile.blocked = false
+        unblocked.push(profile);
+        }
+      });
+      this.contactsSegregated.blocked = blocked;
+      this.contactsSegregated.unblocked = unblocked;
+    },
+
+    ...mapActions(["myBlockedUsers", "refreshUsers"]),
   },
 
   computed: {
+    // map `this.user` to `this.$store.getters.user`
+    ...mapGetters({
+      user: "user",
+      contacts: "contacts",
+      blockedContacts: "blockedContacts",
+    }),
 
-  filteredContacts: function () {
-        var contacts_array = this.contacts,
-          searchString = this.searchString;
-        if (!searchString) {
-          return contacts_array;
-        }
-        searchString = searchString.trim().toLowerCase();
-        contacts_array = contacts_array.filter(function (item) {
-          if (item.displayName.toLowerCase().indexOf(searchString) !== -1) {
-            return item;
-          }
-        });
+    filteredContacts: function () {
+      var contacts_array;
+      if(this.blockedView){
+      contacts_array = this.contactsSegregated.blocked
+      }else{
+      contacts_array = this.contactsSegregated.unblocked
+      }
+      
+      let searchString = this.searchString;
+      if (!searchString) {
         return contacts_array;
       }
-  }
+      searchString = searchString.trim().toLowerCase();
+      contacts_array = contacts_array.filter(function (item) {
+        if (item.displayName.toLowerCase().indexOf(searchString) !== -1) {
+          return item;
+        }
+      });
+      return contacts_array;
+    },
+  },
+
+  created() {
+    this.myBlockedUsers()
+    this.segregateContacts();
+    
+
+  },
 };
 </script>
 

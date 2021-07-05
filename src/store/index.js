@@ -14,8 +14,8 @@ export default new Vuex.Store({
     },
 
     users: null,
-
-    buddyMessages: null
+    blockedUsers: null,
+    buddyMessages: null,
   },
   getters: {
     user(state) {
@@ -23,6 +23,10 @@ export default new Vuex.Store({
     },
     contacts(state) {
       return state.users;
+    },
+
+    blockedContacts(state) {
+      return state.blockedUsers;
     },
 
     buddyMessages(state) {
@@ -33,43 +37,59 @@ export default new Vuex.Store({
     SET_LOGGED_IN(state, value) {
       state.user.loggedIn = value;
     },
-     SET_USER(state, data) {
+    SET_USER(state, data) {
       state.user.data = data;
     },
 
-     SET_USERS(state, users) {
+    SET_USERS(state, users) {
       state.users = users;
     },
 
-     SET_BUDDY_MESSAGES(state, messages){
-      console.log(messages)
+    SET_BUDDY_MESSAGES(state, messages) {
       state.buddyMessages = messages;
     },
 
-    UID(state, value) {
-      state.uid = value;
+    SET_BLOCKED(state, value) {
+      state.blockedUsers = value;
     },
   },
   actions: {
-   async refreshBuddyMessages({ commit,state }, buddy) {
-      
-     await firebase
+    myBlockedUsers({ commit, state }) {
+      firebase
         .database()
-        .ref("chats/" + state.user.data.uid + "/" + buddy.uid + "/messages")
-        .on("value", snapshot => {
-          let messages = [];
-          let m = snapshot.val()
-          for(var key in m){
-             let message = m[key]
-             message.key = key
-            messages.push(message)
+        .ref("blockedcontacts/" + state.user.data.uid)
+        .on("value", (snapshot) => {
+          let blocked = [];
+          let block = snapshot.val();
+          for (var key in block) {
+            // blocked[key] = { blocked: block[key].blocked }
+            if (block[key].blocked == true) {
+              blocked.push(key);
+            }
           }
-          commit("SET_BUDDY_MESSAGES", messages);
-        })
+          
+          commit("SET_BLOCKED", blocked)
+        });
     },
 
-    async refreshUsers({ commit, state }) {
-     await firebase
+    refreshBuddyMessages({ commit, state }, buddy) {
+      firebase
+        .database()
+        .ref("chats/" + state.user.data.uid + "/" + buddy.uid + "/messages")
+        .on("value", (snapshot) => {
+          let messages = [];
+          let m = snapshot.val();
+          for (var key in m) {
+            let message = m[key];
+            message.key = key;
+            messages.push(message);
+          }
+          commit("SET_BUDDY_MESSAGES", messages);
+        });
+    },
+
+    refreshUsers({ commit, state }) {
+      firebase
         .database()
         .ref("accounts/")
         .orderByChild("displayName")
@@ -99,8 +119,6 @@ export default new Vuex.Store({
       commit("SET_BUDDY", buddy);
     },
 
-    checkBlockedStatus() {},
-
     authCheck({ commit, dispatch }) {
       firebase.auth().onAuthStateChanged((user) => {
         commit("SET_LOGGED_IN", false);
@@ -122,7 +140,6 @@ export default new Vuex.Store({
                 status: u.status,
               };
               commit("SET_USER", userDetails);
-              commit("UID", user.uid);
             });
           dispatch("updateUserStatus", {
             status: "online",
@@ -134,6 +151,9 @@ export default new Vuex.Store({
           commit("SET_LOGGED_IN", false);
           commit("SET_USERS", null);
           commit("SET_USER", null);
+          commit("SET_BUDDY_MESSAGES", null);
+          commit("SET_BLOCKED", null);
+
           dispatch("updateUserStatus", {
             status: "offline",
             lastSeen: firebase.firestore.Timestamp.fromDate(

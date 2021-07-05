@@ -3,7 +3,9 @@
     <div class="contact-profile container">
       <img :src="buddy.photoURL" alt="" />
       <p>{{ buddy.displayName }}</p>
-     <span class="ban" title="Block this contact."><a  @click="unblockContact(buddy)"><i class="fa fa-ban"></i></a></span>
+
+     <span v-if="buddy.blocked==false" class="ban"  title="Unblock this contact."><a  @click="blockContact(buddy)"><i class="fa fa-ban"></i></a></span>
+     <span v-if="buddy.blocked==true" class="ban" style="color:red;" title="Block this contact."><a  @click="unblockContact(buddy)"><i class="fa fa-ban"></i></a></span>
     </div>
     <div class="messages" v-if="messages" v-chat-scroll="{ enable: true }" >
       <ul >
@@ -65,18 +67,16 @@ export default {
     };
   },
 
-
   props: {
     user: {},
   },
 
-  async created() {
+   created() {
     eventBus.$on("buddySelected", (buddy) => {
       try {
         if (buddy && buddy.uid != this.buddy.uid) {
           this.buddy = buddy;
           this.active = true;
-          //this.$state.diaspatch("buddyMessages",this.buddy.uid);
         this.refreshBuddyMessages(this.buddy);
         }
       } catch (e) {
@@ -122,24 +122,26 @@ export default {
     },
 
 
-    async blockContact(buddy) {
-      await firebase
+     blockContact(buddy) {
+       firebase
         .database()
         .ref("blockedcontacts/" + this.user.data.uid+ "/" + buddy.uid)
         .set({blocked: true})
         .then(()=>{
+          eventBus.$emit("refreshAllContacts");
             this.$toasted
               .success("You have just blocked "+buddy.displayName+". You will not be visible to this contact.<br> Go to blocked contacts to unblock.")
               .goAway(5000);
         })
     },
 
-    async unblockContact(buddy) {
-      await firebase
+     unblockContact(buddy) {
+       firebase
         .database()
         .ref("blockedcontacts/" + this.user.data.uid+ "/" + buddy.uid)
         .set({blocked: false})
         .then(()=>{
+          eventBus.$emit("refreshAllContacts");
             this.$toasted
               .info("You have unblocked "+buddy.displayName+". <br> Contact can noe see and interact with you.")
               .goAway(5000);
@@ -152,6 +154,7 @@ export default {
   computed: {
     // map `this.user` to `this.$store.getters.user`
     ...mapGetters({
+      user: "user",
       messages: "buddyMessages",
     }),
   },
