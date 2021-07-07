@@ -22,11 +22,7 @@
     </div>
     <div id="search">
       <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-      <input
-        type="text"
-        placeholder="Search contacts..."
-        v-model="searchString"
-      />
+      <input type="text" :placeholder="placeholder" v-model="searchString" />
     </div>
     <div id="contacts">
       <ul
@@ -61,22 +57,23 @@
       </ul>
     </div>
     <div id="bottom-bar">
-      <button id="addcontact">
-        <i class="fa fa-sign-out fa-fw" aria-hidden="true"></i>
-        <span> <a @click="logout" class="">Logout</a></span>
-      </button>
-      <button id="settings" v-if="!blockedView"  @click="toggleBlockedView()">
+      <button id="settings" v-if="!blockedView" @click="toggleBlockedView()">
         <i class="fa fa-ban fa-fw" aria-hidden="true"></i> <span>Blocked</span>
       </button>
       <button id="settings" v-if="blockedView" @click="toggleBlockedView()">
-        <i class="fa fa-users fa-fw" aria-hidden="true"></i> <span>Contacts</span>
+        <i class="fa fa-users fa-fw" aria-hidden="true"></i>
+        <span>Contacts</span>
+      </button>
+      <button id="settings">
+        <i class="fa fa-arrow-left fa-fw" aria-hidden="true"></i>
+        <span> <a @click="logout" class="">Logout</a></span>
       </button>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 import { eventBus } from "../main";
 import firebase from "firebase/app";
 
@@ -89,28 +86,36 @@ export default {
       formValue: {},
       status: true,
       selectedId: String,
+      placeholder: "Search contacts...",
       searchString: "",
+      buddy: {},
       contactsSegregated: {
         blocked: [],
-        unblocked:[]
+        unblocked: [],
       },
       blockedView: false,
-      isBlockedContact: null
+      isBlockedContact: null,
     };
   },
 
   methods: {
     setCurrentChatBuddy(buddy) {
+      if (this.selectedId !== this.buddy.uid) {
+        this.selectedId = buddy.uid;
+        this.$store.commit("SET_BUDDY", buddy);
+        eventBus.$emit("buddySelected", buddy);
+      }
+
       this.selectedId = buddy.uid;
       eventBus.$emit("buddySelected", buddy);
     },
 
-    toggleBlockedView(){
-      this.blockedView = !this.blockedView
+    toggleBlockedView() {
+      this.blockedView = !this.blockedView;
     },
 
-     logout() {
-       firebase
+    logout() {
+      firebase
         .database()
         .ref("accounts/" + this.user.data.uid)
         .update({
@@ -131,25 +136,6 @@ export default {
           console.log(e);
         });
     },
-
-    async segregateContacts() {
-      let blockedArray = Object.values(this.blockedContacts);
-      let blocked = []
-      let unblocked = []
-      this.contacts.forEach(function (profile) {
-        if (blockedArray.includes(profile.uid)) {
-         profile.blocked = true
-         blocked.push(profile);
-        } else {
-        profile.blocked = false
-        unblocked.push(profile);
-        }
-      });
-      this.contactsSegregated.blocked = blocked;
-      this.contactsSegregated.unblocked = unblocked;
-    },
-
-    ...mapActions(["myBlockedUsers", "refreshUsers"]),
   },
 
   computed: {
@@ -157,17 +143,15 @@ export default {
     ...mapGetters({
       user: "user",
       contacts: "contacts",
-      blockedContacts: "blockedContacts",
     }),
 
     filteredContacts: function () {
       var contacts_array;
-      if(this.blockedView){
-      contacts_array = this.contactsSegregated.blocked
-      }else{
-      contacts_array = this.contactsSegregated.unblocked
+      if (this.blockedView) {
+        contacts_array = this.contacts.blocked;
+      } else {
+        contacts_array = this.contacts.unblocked;
       }
-      
       let searchString = this.searchString;
       if (!searchString) {
         return contacts_array;
@@ -183,10 +167,22 @@ export default {
   },
 
   created() {
-    this.myBlockedUsers()
-    this.segregateContacts();
-    
+    this.setCurrentChatBuddy(this.buddy);
+    eventBus.$on("refreshAllContacts", (buddy) => {
+      this.setCurrentChatBuddy(buddy);
+      this.$store.dispatch("myHaters");
+      this.$store.dispatch("myBlockedUsers");
+      this.$store.dispatch("refreshUsers");
+      this.$store.getters.contacts;
+      console.log(this.contacts);
+    });
+  },
 
+  mounted() {
+    this.$store.dispatch("refreshUsers");
+    this.$store.dispatch("myBlockedUsers");
+    this.$store.dispatch("refreshUsers");
+    this.$store.getters.contacts;
   },
 };
 </script>

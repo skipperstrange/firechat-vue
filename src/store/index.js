@@ -12,17 +12,51 @@ export default new Vuex.Store({
       loggedIn: false,
       data: null,
     },
+    buddy: null,
 
+    uid: String,
     users: null,
     blockedUsers: null,
     buddyMessages: null,
+    haters: null,
+    contactsSegregated: {
+      blocked: [],
+      unblocked: [],
+    },
   },
   getters: {
     user(state) {
       return state.user;
     },
+
+    buddy(state) {
+      return state.buddy;
+    },
     contacts(state) {
-      return state.users;
+      let tempUsers = [];
+      state.users.forEach((user) => {
+        if (state.haters.includes(user.uid)) {
+          ""
+        } else {
+          tempUsers.push(user);
+        }
+      });
+
+      let blocked = [];
+      let unblocked = [];
+      tempUsers.forEach(function (profile) {
+        if (state.blockedUsers.includes(profile.uid)) {
+          profile.blocked = true;
+          blocked.push(profile);
+        } else {
+          profile.blocked = false;
+          unblocked.push(profile);
+        }
+      });
+
+      state.contactsSegregated.blocked = blocked;
+      state.contactsSegregated.unblocked = unblocked;
+      return state.contactsSegregated;
     },
 
     blockedContacts(state) {
@@ -32,13 +66,30 @@ export default new Vuex.Store({
     buddyMessages(state) {
       return state.buddyMessages;
     },
+
+    uid(state) {
+      return state.uid;
+    },
+
+    haters(state) {
+      return state.haters;
+    },
   },
   mutations: {
     SET_LOGGED_IN(state, value) {
       state.user.loggedIn = value;
     },
+
     SET_USER(state, data) {
       state.user.data = data;
+    },
+
+    SET_BUDDY(state, buddy) {
+      state.buddy = buddy;
+    },
+
+    SET_UID(state, value) {
+      state.uid = value;
     },
 
     SET_USERS(state, users) {
@@ -52,8 +103,16 @@ export default new Vuex.Store({
     SET_BLOCKED(state, value) {
       state.blockedUsers = value;
     },
+
+    SET_HATERS(state, value) {
+      state.haters = value;
+    },
   },
   actions: {
+    setBuddy({ commit }, buddy) {
+      commit("SET_BUDDY", buddy);
+    },
+
     myBlockedUsers({ commit, state }) {
       firebase
         .database()
@@ -62,13 +121,31 @@ export default new Vuex.Store({
           let blocked = [];
           let block = snapshot.val();
           for (var key in block) {
-            // blocked[key] = { blocked: block[key].blocked }
             if (block[key].blocked == true) {
               blocked.push(key);
             }
           }
-          
-          commit("SET_BLOCKED", blocked)
+          commit("SET_BLOCKED", blocked);
+        });
+    },
+
+    myHaters({ state, commit }) {
+      firebase
+        .database()
+        .ref("blockedcontacts/")
+        .on("value", (snapshot) => {
+          let haters = [];
+          let hates = snapshot.val();
+          let me = state.uid;
+          for (var key in hates) {
+            if (key !== me) {
+              if (hates[key][me].blocked) {
+                //console.log(key +" has blocked "+me)
+                haters.push(key);
+              }
+            }
+          }
+          commit("SET_HATERS", haters);
         });
     },
 
@@ -115,17 +192,15 @@ export default new Vuex.Store({
         });
     },
 
-    setCurrentBuddy({ commit }, buddy) {
-      commit("SET_BUDDY", buddy);
-    },
-
     authCheck({ commit, dispatch }) {
       firebase.auth().onAuthStateChanged((user) => {
         commit("SET_LOGGED_IN", false);
-        commit("SET_USER", null);
+        commit("SET_UID", null);
         commit("SET_USERS", null);
+        commit("SET_BUDDY_MESSAGES", null);
         if (user) {
           commit("SET_LOGGED_IN", true);
+          commit("SET_UID", user.uid);
           firebase
             .database()
             .ref("accounts/" + user.uid)
@@ -148,19 +223,18 @@ export default new Vuex.Store({
             ).toDate(),
           });
         } else {
-          commit("SET_LOGGED_IN", false);
-          commit("SET_USERS", null);
-          commit("SET_USER", null);
-          commit("SET_BUDDY_MESSAGES", null);
-          commit("SET_BLOCKED", null);
-
           dispatch("updateUserStatus", {
             status: "offline",
             lastSeen: firebase.firestore.Timestamp.fromDate(
               new Date()
             ).toDate(),
           });
-          //firebase.auth().unsubscribe();
+          commit("SET_LOGGED_IN", false);
+          commit("SET_USER", null);
+          commit("SET_BUDDY", null);
+          commit("SET_UID", null);
+          commit("SET_USERS", null);
+          commit("SET_BUDDY_MESSAGES", null);
         }
       });
     },

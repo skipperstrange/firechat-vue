@@ -26,7 +26,6 @@ export default {
 
   mounted() {
     this.$store.dispatch("authCheck");
-    this.$store.dispatch("refreshUsers");
   },
 };
 </script>

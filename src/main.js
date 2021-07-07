@@ -4,7 +4,7 @@ import router from "./router";
 import store from "./store/index.js";
 import Toasted from "vue-toasted";
 import VueFormulate from "@braid/vue-formulate";
-import VueChatScroll from 'vue-chat-scroll';
+import VueChatScroll from "vue-chat-scroll";
 import firebaseConfig from "./firebaseConfig.js";
 import toasterOptions from "./toasterOptions.js";
 import firebase from "firebase";
