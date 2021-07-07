@@ -4,7 +4,7 @@
     <p class="text-muted mb-4">Please login to chat with members</p>
 
     <FormulateForm v-model="formValues" @submit="login">
-      <div class="mb-3">
+      <div class="mb-2">
         <FormulateInput
           name="email"
           type="email"
@@ -13,7 +13,7 @@
           placeholder="Email address"
         />
       </div>
-      <div class="mb-3">
+      <div class="mb-2">
         <FormulateInput
           name="password"
           type="password"
@@ -23,7 +23,7 @@
         />
       </div>
 
-      <div class="mb-3">
+      <div class="mb-1">
         <FormulateInput type="submit" label="Sign In" />
       </div>
     </FormulateForm>

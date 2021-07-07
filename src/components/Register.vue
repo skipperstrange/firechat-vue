@@ -4,7 +4,7 @@
     <p class="text-muted mb-4">You can also register to get started.</p>
 
     <FormulateForm v-model="formValues" @submit="signup">
-      <div class="mb-3">
+      <div class="mb-2">
         <FormulateInput
           name="email"
           type="email"
@@ -13,7 +13,7 @@
           placeholder="Email address"
         />
       </div>
-      <div class="mb-3">
+      <div class="mb-2">
         <FormulateInput
           name="username"
           type="text"
@@ -22,7 +22,7 @@
           placeholder="Username"
         />
       </div>
-      <div class="mb-3">
+      <div class="mb-2">
         <FormulateInput
           name="password"
           type="password"
@@ -32,7 +32,7 @@
         />
       </div>
 
-      <div class="mb-3">
+      <div class="mb-1">
         <FormulateInput type="submit" label="Sign Up" />
       </div>
     </FormulateForm>

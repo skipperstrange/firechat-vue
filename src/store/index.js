@@ -36,7 +36,7 @@ export default new Vuex.Store({
       let tempUsers = [];
       state.users.forEach((user) => {
         if (state.haters.includes(user.uid)) {
-          ""
+          console.log(user.displayName + " has blocked me");
         } else {
           tempUsers.push(user);
         }

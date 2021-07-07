@@ -19,6 +19,7 @@
 <script>
 //importing bootstrap 5 Modules
 import "./assets/css/bootstrap4.css";
+import "./assets/css/App.css";
 import "./assets/css/app-chat.css";
 
 export default {
