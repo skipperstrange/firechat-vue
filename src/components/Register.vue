@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3 class="display-4">Sign Up!!</h3>
-    <p class="text-muted mb-4">You can also register to get started.</p>
+    <p class="text-muted mb-2">You can also register to get started.</p>
 
     <FormulateForm v-model="formValues" @submit="signup">
       <div class="mb-2">
@@ -65,12 +65,8 @@ export default {
             userid: user.uid,
             email: this.formValues.email,
             displayName: this.formValues.username,
-            createdAt: firebase.firestore.Timestamp.fromDate(
-              new Date()
-            ).toDate(),
-            lastSeen: firebase.firestore.Timestamp.fromDate(
-              new Date()
-            ).toDate(),
+            createdAt:  Date.now(),
+            lastSeen:  Date.now(),
             photoURL:
               "https://cdn0.iconfinder.com/data/icons/multimedia-solid-30px/30/user_account_profile-512.png",
             status: "online",

@@ -1,8 +1,8 @@
 <template>
   <div>
     <h3 class="display-4">Come in!</h3>
-    <p class="text-muted mb-4">Please login to chat with members</p>
-
+    <p class="text-muted mb-1">Please login to chat with members</p>
+    <Auth0 />
     <FormulateForm v-model="formValues" @submit="login">
       <div class="mb-2">
         <FormulateInput
@@ -32,6 +32,7 @@
 
 <script>
 import firebase from "firebase";
+import Auth0 from "@/components/Auth-Third.vue";
 
 export default {
   name: "Login",
@@ -41,7 +42,9 @@ export default {
     };
   },
 
-  components: {},
+  components: {
+    Auth0,
+  },
 
   methods: {
     async login() {
@@ -52,14 +55,13 @@ export default {
           this.formValues.password
         )
         .then(() => {
-          this.$store.dispatch("authCheck").then(() => {
             this.$toasted
               .success("Please wait to enter chat room.")
               .goAway(5000);
             this.$router.push({ name: "Home" });
-          });
         })
         .catch((err) => {
+          console.log(err)
           this.$toasted.error(err.message).goAway(5000);
         });
     },

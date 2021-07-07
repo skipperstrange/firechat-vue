@@ -245,5 +245,20 @@ export default new Vuex.Store({
         .ref("accounts/" + state.user.data.uid)
         .update(data);
     },
+
+    logout({commit}){
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          commit("SET_LOGGED_IN", false);
+          commit("SET_USER", null);
+          commit("SET_BUDDY", null);
+          commit("SET_UID", null);
+          commit("SET_USERS", null);
+          commit("SET_BUDDY_MESSAGES", null);
+          console.log("Successfully signed out.");
+        });
+    }
   },
 });

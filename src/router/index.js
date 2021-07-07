@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Chat from "../views/Chat.vue";
 import Auth from "@/components/Auth.vue";
+import Logout from "@/components/Logout.vue";
 import store from "../store/index.js";
 
 Vue.use(VueRouter);
@@ -35,6 +36,18 @@ const routes = [
     path: "/",
     name: "Chat",
     component: Chat,
+    beforeEnter: (to, from, next) => {
+      if (store.getters.user.loggedIn === false) {
+        next("/home");
+      } else {
+        next();
+      }
+    },
+  },
+  {
+    path: "/logout",
+    name: "Logout",
+    component: Logout,
     beforeEnter: (to, from, next) => {
       if (store.getters.user.loggedIn === false) {
         next("/home");
