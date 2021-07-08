@@ -34,13 +34,18 @@ export default new Vuex.Store({
     },
     contacts(state) {
       let tempUsers = [];
-      state.users.forEach((user) => {
-        if (state.haters.includes(user.uid)) {
-          console.log(user.displayName + " has blocked me");
-        } else {
-          tempUsers.push(user);
-        }
-      });
+      try{
+        state.users.forEach((user) => {
+          if (state.haters.includes(user.uid)) {
+            console.log(user.displayName + " has blocked me");
+          } else {
+            tempUsers.push(user);
+          }
+        });
+      }
+      catch(e){
+        console.log(e)
+      }
 
       let blocked = [];
       let unblocked = [];
