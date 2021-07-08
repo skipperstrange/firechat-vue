@@ -1,10 +1,10 @@
 <template>
-<div>
-  <BackgroundEffects />
-  <div id="frame">
-    <users-list />
-    <chat-window />
-  </div>
+  <div>
+    <BackgroundEffects />
+    <div id="frame">
+      <users-list />
+      <chat-window />
+    </div>
   </div>
 </template>
 
@@ -19,9 +19,8 @@ export default {
   components: {
     ChatWindow,
     UsersList,
-    BackgroundEffects
+    BackgroundEffects,
   },
-
 };
 </script>
 
