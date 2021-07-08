@@ -26,14 +26,14 @@ export default {
           const newAccount = {
             userid: user.uid,
             email: user.email,
-            displayName: user.displayName, 
+            displayName: user.displayName,
             createdAt: Date.now(),
             lastSeen: Date.now(),
             photoURL:
               "https://cdn0.iconfinder.com/data/icons/multimedia-solid-30px/30/user_account_profile-512.png",
             status: "online",
           };
-          
+
           firebase
             .database()
             .ref("accounts/" + user.uid)
@@ -49,8 +49,8 @@ export default {
             .catch((err) => {
               this.$toasted.show(err.message).goAway(5000);
             });
-       })
-        
+        })
+
         .catch((err) => {
           console.log(err); // This will give you all the information needed to further debug any errors
           this.$toasted.error(err.message).goAway(5000);

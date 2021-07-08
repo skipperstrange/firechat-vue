@@ -246,7 +246,7 @@ export default new Vuex.Store({
         .update(data);
     },
 
-    logout({commit}){
+    logout({ commit }) {
       firebase
         .auth()
         .signOut()
@@ -259,6 +259,6 @@ export default new Vuex.Store({
           commit("SET_BUDDY_MESSAGES", null);
           console.log("Successfully signed out.");
         });
-    }
+    },
   },
 });

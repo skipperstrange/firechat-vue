@@ -55,13 +55,11 @@ export default {
           this.formValues.password
         )
         .then(() => {
-            this.$toasted
-              .success("Please wait to enter chat room.")
-              .goAway(5000);
-            this.$router.push({ name: "Home" });
+          this.$toasted.success("Please wait to enter chat room.").goAway(5000);
+          this.$router.push({ name: "Home" });
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
           this.$toasted.error(err.message).goAway(5000);
         });
     },

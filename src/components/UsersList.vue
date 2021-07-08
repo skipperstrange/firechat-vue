@@ -57,10 +57,20 @@
       </ul>
     </div>
     <div id="bottom-bar">
-      <button id="settings" title="Blocked Contacts" v-if="!blockedView" @click="toggleBlockedView()">
+      <button
+        id="settings"
+        title="Blocked Contacts"
+        v-if="!blockedView"
+        @click="toggleBlockedView()"
+      >
         <i class="fa fa-ban fa-fw" aria-hidden="true"></i> <span>Blocked</span>
       </button>
-      <button id="settings" v-b-tooltip.hover.right="'Contacts'" v-if="blockedView" @click="toggleBlockedView()">
+      <button
+        id="settings"
+        v-b-tooltip.hover.right="'Contacts'"
+        v-if="blockedView"
+        @click="toggleBlockedView()"
+      >
         <i class="fa fa-users fa-fw" aria-hidden="true"></i>
         <span>Contacts</span>
       </button>

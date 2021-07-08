@@ -23,9 +23,8 @@ import "./assets/css/App.css";
 import "./assets/css/app-chat.css";
 
 export default {
-
   name: "App",
-  
+
   methods: {},
 
   mounted() {

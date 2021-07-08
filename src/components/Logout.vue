@@ -1,11 +1,10 @@
 <script>
-
 export default {
-    name: "Logout",
+  name: "Logout",
 
-    mounted (){
+  mounted() {
     this.$store.dispatch("logout");
     this.$router.replace({ name: "Home" });
-    }
-}
+  },
+};
 </script>

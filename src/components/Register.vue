@@ -65,8 +65,8 @@ export default {
             userid: user.uid,
             email: this.formValues.email,
             displayName: this.formValues.username,
-            createdAt:  Date.now(),
-            lastSeen:  Date.now(),
+            createdAt: Date.now(),
+            lastSeen: Date.now(),
             photoURL:
               "https://cdn0.iconfinder.com/data/icons/multimedia-solid-30px/30/user_account_profile-512.png",
             status: "online",
