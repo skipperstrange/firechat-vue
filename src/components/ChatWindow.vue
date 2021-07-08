@@ -18,8 +18,8 @@
         ><a @click="unblockContact(buddy)"><i class="fa fa-ban"></i></a
       ></span>
     </div>
-    <div class="messages" v-if="messages">
-      <ul v-chat-scroll="{ enable: true }">
+    <div class="messages" v-if="messages" v-chat-scroll="{ enable: true }">
+      <ul>
         <li
           v-for="message in messages"
           :key="message.key"
