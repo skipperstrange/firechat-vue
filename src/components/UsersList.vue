@@ -177,21 +177,15 @@ export default {
   },
 
   created() {
-    this.setCurrentChatBuddy(this.buddy);
-    eventBus.$on("refreshAllContacts", (buddy) => {
-      this.setCurrentChatBuddy(buddy);
-      this.$store.dispatch("myHaters");
-      this.$store.dispatch("myBlockedUsers");
-      this.$store.dispatch("refreshUsers");
-      this.$store.getters.contacts;
-    });
+    this.$store.dispatch("segregateContacts");
   },
 
   mounted() {
-    this.$store.dispatch("refreshUsers");
-    this.$store.dispatch("myBlockedUsers");
-    this.$store.dispatch("refreshUsers");
-    this.$store.getters.contacts;
+    //this.setCurrentChatBuddy(this.buddy);
+    eventBus.$on("refreshAllContacts", (buddy) => {
+      this.setCurrentChatBuddy(buddy);
+      this.$store.dispatch("segregateContacts");
+    });
   },
 };
 
