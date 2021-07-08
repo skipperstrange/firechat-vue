@@ -22,6 +22,8 @@ export default {
     BackgroundEffects,
   },
 };
+
+console.log("Chat screen loaded...")
 </script>
 
 <style></style>

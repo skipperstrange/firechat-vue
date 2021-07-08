@@ -194,6 +194,8 @@ export default {
     this.$store.getters.contacts;
   },
 };
+
+console.log("Users list loaded");
 </script>
 
 <style></style>

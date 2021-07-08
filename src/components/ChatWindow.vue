@@ -186,6 +186,9 @@ export default {
     }),
   },
 };
+
+
+console.log("Chat window ready");
 </script>
 
 <style></style>
