@@ -69,8 +69,8 @@ export default new Vuex.Store({
       state.uid = value;
     },
 
-    SET_USERS(state, users) {
-      state.users = users;
+    async SET_USERS(state, users) {
+      state.users = await users;
     },
 
     SET_CONTACTS(state, contacts) {
