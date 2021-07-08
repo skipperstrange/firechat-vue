@@ -46,6 +46,15 @@ npm run lint
 * Remember to update the athentication signin methods on firebase
 * For a quick total refresh go to the /logout url
 
+
+### Todos
+* Fix mobile responsive view
+* Add media sharing
+* Add profile edits page
+* Remove unused packages causing high overheads during deployment
+
+### Bugs
+* Correct homepage redirect after login
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
