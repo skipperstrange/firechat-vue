@@ -21,6 +21,18 @@ Go to [firebase](https://console.firebase.google.com/) , setup your app and acce
 
 Save and copy your web configuration to src/firebaseConfig.js. The dummy config file would probablly be decommissioned by the time you want to run.
 
+#### src/firebaseBase.js content
+
+Your firebase config file should look like this
+
+```
+const firebaseConfig = {
+ ...Your firebase api keys here
+};
+
+export default firebaseConfig;
+```
+
 
 ### Setup node and build
 ```
