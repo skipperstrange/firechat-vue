@@ -34,9 +34,6 @@ export default new Vuex.Store({
     },
     contacts(state) {
       let tempUsers = [];
-      console.log(state.user)
-      console.log(state.users)
-
       state.users.forEach((user) => {
         if (state.haters.includes(user.uid)) {
           console.log(user.displayName + " has blocked me");
@@ -44,7 +41,7 @@ export default new Vuex.Store({
           tempUsers.push(user);
         }
       });
-      console.log(state.users)
+
       let blocked = [];
       let unblocked = [];
       tempUsers.forEach(function (profile) {
