@@ -42,7 +42,9 @@ npm run build
 npm run lint
 ```
 
-N. B. For a quick total refresh go to the /logout url
+### Tips: 
+* Remember to update the athentication signin methods on firebase
+* For a quick total refresh go to the /logout url
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
