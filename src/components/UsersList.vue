@@ -1,7 +1,7 @@
 <template>
   <div id="sidepanel">
     <div id="profile">
-      <div class="wrap d-flex" v-if="user.loggedIn">
+      <div class="wrap d-flex">
         <div class="profile-img" style="margin-right: 0.7rem">
           <img
             id="profile-img"
