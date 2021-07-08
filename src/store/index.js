@@ -33,34 +33,6 @@ export default new Vuex.Store({
       return state.buddy;
     },
     contacts(state) {
-      let tempUsers = [];
-      try{
-        state.users.forEach((user) => {
-          if (state.haters.includes(user.uid)) {
-            console.log(user.displayName + " has blocked me");
-          } else {
-            tempUsers.push(user);
-          }
-        });
-      }
-      catch(e){
-        console.log(e)
-      }
-
-      let blocked = [];
-      let unblocked = [];
-      tempUsers.forEach(function (profile) {
-        if (state.blockedUsers.includes(profile.uid)) {
-          profile.blocked = true;
-          blocked.push(profile);
-        } else {
-          profile.blocked = false;
-          unblocked.push(profile);
-        }
-      });
-
-      state.contactsSegregated.blocked = blocked;
-      state.contactsSegregated.unblocked = unblocked;
       return state.contactsSegregated;
     },
 
@@ -101,6 +73,10 @@ export default new Vuex.Store({
       state.users = users;
     },
 
+    SET_CONTACTS(state, contacts) {
+      state.contactsSegregated = contacts;
+    },
+
     SET_BUDDY_MESSAGES(state, messages) {
       state.buddyMessages = messages;
     },
@@ -113,6 +89,7 @@ export default new Vuex.Store({
       state.haters = value;
     },
   },
+
   actions: {
     setBuddy({ commit }, buddy) {
       commit("SET_BUDDY", buddy);
@@ -195,6 +172,44 @@ export default new Vuex.Store({
           });
           commit("SET_USERS", allContacts);
         });
+    },
+
+    async segregateContacts({ state, dispatch, commit }) {
+      await dispatch("refreshUsers").then(() => {
+        dispatch("myHaters").then(() => {
+          dispatch("myBlockedUsers").then(() => {
+            let tempUsers = [];
+            try {
+              state.users.forEach((user) => {
+                if (state.haters.includes(user.uid)) {
+                  console.log(user.displayName + " has blocked me");
+                } else {
+                  tempUsers.push(user);
+                }
+              });
+            } catch (e) {
+              console.log(e);
+            }
+
+            let blocked = [];
+            let unblocked = [];
+            tempUsers.forEach(function (profile) {
+              if (state.blockedUsers.includes(profile.uid)) {
+                profile.blocked = true;
+                blocked.push(profile);
+              } else {
+                profile.blocked = false;
+                unblocked.push(profile);
+              }
+            });
+            let d = {};
+            d.blocked = blocked;
+            d.unblocked = unblocked;
+            console.log(d);
+            commit("SET_CONTACTS", d);
+          });
+        });
+      });
     },
 
     authCheck({ commit, dispatch }) {
