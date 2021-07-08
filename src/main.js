@@ -19,9 +19,10 @@ firebase.initializeApp(firebaseConfig);
 Vue.use(VueChatScroll);
 Vue.use(Toasted, toasterOptions);
 Vue.use(VueFormulate);
+Vue.use(router);
+await router.isReady()
 Vue.config.productionTip = false;
 new Vue({
-  router,
   store,
   render: (h) => h(App),
 }).$mount("#app");
