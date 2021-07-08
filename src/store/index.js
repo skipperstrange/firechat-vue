@@ -170,7 +170,7 @@ export default new Vuex.Store({
         });
     },
 
-    refreshUsers({ commit, state }) {
+    async refreshUsers({ commit, state }) {
       firebase
         .database()
         .ref("accounts/")
