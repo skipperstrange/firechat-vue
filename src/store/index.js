@@ -81,12 +81,12 @@ export default new Vuex.Store({
       state.buddyMessages = messages;
     },
 
-    SET_BLOCKED(state, value) {
-      state.blockedUsers = value;
+    async SET_BLOCKED(state, value) {
+      state.blockedUsers = await value;
     },
 
-    SET_HATERS(state, value) {
-      state.haters = value;
+    async SET_HATERS(state, value) {
+      state.haters = await value;
     },
   },
 
@@ -95,8 +95,8 @@ export default new Vuex.Store({
       commit("SET_BUDDY", buddy);
     },
 
-    myBlockedUsers({ commit, state }) {
-      firebase
+    async myBlockedUsers({ commit, state }) {
+      await firebase
         .database()
         .ref("blockedcontacts/" + state.user.data.uid)
         .on("value", (snapshot) => {
@@ -111,8 +111,8 @@ export default new Vuex.Store({
         });
     },
 
-    myHaters({ state, commit }) {
-      firebase
+    async myHaters({ state, commit }) {
+      await firebase
         .database()
         .ref("blockedcontacts/")
         .on("value", (snapshot) => {
@@ -148,7 +148,7 @@ export default new Vuex.Store({
     },
 
     async refreshUsers({ commit, state }) {
-      firebase
+      await firebase
         .database()
         .ref("accounts/")
         .orderByChild("displayName")
@@ -205,7 +205,6 @@ export default new Vuex.Store({
             let d = {};
             d.blocked = blocked;
             d.unblocked = unblocked;
-            console.log(d);
             commit("SET_CONTACTS", d);
           });
         });

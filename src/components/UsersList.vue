@@ -67,7 +67,7 @@
       </button>
       <button
         id="settings"
-        v-b-tooltip.hover.right="'Contacts'"
+        title="'Contacts'"
         v-if="blockedView"
         @click="toggleBlockedView()"
       >
@@ -85,7 +85,6 @@
 <script>
 import { mapGetters } from "vuex";
 import { eventBus } from "../main";
-import firebase from "firebase/app";
 
 export default {
   name: "UsersList",
@@ -125,26 +124,7 @@ export default {
     },
 
     logout() {
-      firebase
-        .database()
-        .ref("accounts/" + this.user.data.uid)
-        .update({
-          status: "offline",
-          lastSeen: firebase.firestore.Timestamp.fromDate(new Date()).toDate(),
-        })
-        .then(() => {
-          firebase
-            .auth()
-            .signOut()
-            .then(() => {
-              this.$store.dispatch("authCheck").then(() => {
-                this.$router.replace({ name: "Home" });
-              });
-            });
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+      this.$router.push({ name: "Home" });
     },
   },
 
