@@ -6,7 +6,10 @@
           <div class="col-lg-5 col-lg-4 bg-image d-lg-block d-sm-none d-none">
             <img src="../assets/img/undrawPride.svg" alt="Login" />
           </div>
-          <div class="col-lg-7 pane">
+          <div
+            class="col-lg-7 pane"
+            style="overflow-y: auto; -webkit-scrollbar: none"
+          >
             <div class="login d-flex align-items-center py-5">
               <div class="container">
                 <div class="col-lg-10 col-xl-7 mx-auto">

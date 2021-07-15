@@ -16,6 +16,12 @@ export default {
     ChatWindow,
     UsersList,
   },
+
+  mounted() {
+    this.$store.dispatch("authCheck").then(() => {
+      this.$store.dispatch("segregateContacts");
+    });
+  },
 };
 
 console.log("Chat screen loaded...");

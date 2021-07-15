@@ -60,7 +60,7 @@
         </li>
       </ul>
     </div>
-    <div id="bottom-bar">
+    <div id="bottom-bar" :class="{ 'side-menu-full': sideMenu }">
       <button
         id="settings"
         title="Blocked Contacts"
@@ -78,13 +78,9 @@
         <i class="fa fa-users fa-fw" aria-hidden="true"></i>
         <span>Contacts</span>
       </button>
-      <button id="settings">
+      <button>
         <i class="fa fa-arrow-left fa-fw" aria-hidden="true"></i>
-        <span>
-          <router-link to="/logout" style="color: white"
-            >Logout</router-link
-          ></span
-        >
+        <span> <a @click="logout()" style="color: white">Logout</a></span>
       </button>
     </div>
   </div>
@@ -93,6 +89,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { eventBus } from "../main";
+import { setTimeout } from "timers";
 
 export default {
   name: "UsersList",
@@ -137,6 +134,14 @@ export default {
       console.log(!this.sideMenu);
       this.sideMenu = !this.sideMenu;
       this.visibleMeta = !this.visibleMeta;
+    },
+
+    logout() {
+      console.log("Logging out...");
+      this.$store.dispatch("logout");
+      setTimeout(() => {
+        this.$router.replace({ name: "Home" });
+      }, 3000);
     },
   },
 
