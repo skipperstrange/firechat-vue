@@ -74,12 +74,12 @@
     <div class="container">
       <img src="../assets/img/undrawQuickChat.svg" />
       <h2>Select a buddy to chat</h2>
-      <h2>
+      <!--h2>
         Or
         <a @click="refresh()"
           ><i class="fa fa-refresh"></i> Click here to see availible users.</a
         >
-      </h2>
+      </h2-->
     </div>
   </div>
 </template>
