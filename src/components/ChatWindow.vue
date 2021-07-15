@@ -1,5 +1,5 @@
 <template>
-  <div class="content" v-if="active === true">
+  <div class="content" v-if="active">
     <div class="contact-profile container">
       <img :src="buddy.photoURL" alt="" />
       <p>{{ buddy.displayName }}</p>
@@ -52,6 +52,7 @@
         </li>
       </ul>
     </div>
+
     <div class="message-input">
       <div class="wrap">
         <form @submit="sendMessage" style="height: 100%">
@@ -67,6 +68,12 @@
           </button>
         </form>
       </div>
+    </div>
+  </div>
+  <div class="no-buddy" v-else>
+    <div class="container">
+      <img src="../assets/img/undrawQuickChat.svg" />
+      <h2>Select ab buddy to chat</h2>
     </div>
   </div>
 </template>
@@ -186,7 +193,6 @@ export default {
     }),
   },
 };
-
 
 console.log("Chat window ready");
 </script>

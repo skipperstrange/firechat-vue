@@ -27,6 +27,8 @@
   border-bottom-left-radius: .5rem;
 }
 
+
+
 @media screen and (max-width: 480px) {
   #frame {
     width: 100%;
@@ -39,6 +41,8 @@
     border-radius: 0px;
   }
 }
+
+
 
 @media all and (max-width: 735px) {
   #frame #sidepanel {
@@ -539,13 +543,41 @@
     display: none;
   }
 }
-#frame .content {
+#frame .content, .no-buddy {
   float: right;
-  width: 60%;
+  width: 100%;
   height: 100%;
   overflow: hidden;
   position: relative;
   background: url('../img/chat-bg.png');
+}
+
+#frame .no-buddy{
+  background: none;
+
+ }
+
+
+#frame .no-buddy .container{
+  text-align: center;
+  text-transform: capitalize;
+  position: absolute;
+  top:28.5%;
+  left: 0%;
+  width: 98%;
+  overflow: hidden;
+  border-radius: 3px;
+  
+ }
+
+ #frame .no-buddy h2{
+  color:#a9a9a9;
+  font-weight: 700;
+  text-indent: 2vmax;
+ }
+
+ #frame .no-buddy img{
+  max-width: 80%;
 }
 @media screen and (max-width: 735px) {
   #frame .content {
