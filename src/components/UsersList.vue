@@ -1,8 +1,12 @@
 <template>
-  <div id="sidepanel">
+  <div id="sidepanel" :class="{ active: sideMenu }">
     <div id="profile">
       <div class="wrap d-flex" v-if="user.loggedIn">
-        <div class="profile-img" style="margin-right: 0.7rem">
+        <div
+          class="profile-img"
+          @click="toggleSideMenu()"
+          style="margin-right: 0.7rem"
+        >
           <img
             id="profile-img"
             v-bind:src="user.data.photoURL"
@@ -20,7 +24,7 @@
         </div>
       </div>
     </div>
-    <div id="search">
+    <div id="search" :class="{ visible: sideMenu }">
       <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
       <input type="text" :placeholder="placeholder" v-model="searchString" />
     </div>
@@ -46,7 +50,7 @@
           <div class="wrap">
             <span :class="'contact-status ' + contact.status"></span>
             <img :src="contact.photoURL" alt="" style="background: #fff" />
-            <div class="meta">
+            <div class="meta" :class="{ visible: sideMenu }">
               <h6 class="name" style="color: #fff">
                 {{ contact.displayName }}
               </h6>
@@ -76,7 +80,11 @@
       </button>
       <button id="settings">
         <i class="fa fa-arrow-left fa-fw" aria-hidden="true"></i>
-        <span> <a @click="logout" class="">Logout</a></span>
+        <span>
+          <router-link to="/logout" style="color: white"
+            >Logout</router-link
+          ></span
+        >
       </button>
     </div>
   </div>
@@ -98,6 +106,7 @@ export default {
       placeholder: "Search contacts...",
       searchString: "",
       buddy: {},
+      sideMenu: false,
       contactsSegregated: {
         blocked: [],
         unblocked: [],
@@ -113,6 +122,7 @@ export default {
         this.selectedId = buddy.uid;
         this.$store.commit("SET_BUDDY", buddy);
         eventBus.$emit("buddySelected", buddy);
+        this.sideMenu = false;
       }
 
       this.selectedId = buddy.uid;
@@ -123,8 +133,10 @@ export default {
       this.blockedView = !this.blockedView;
     },
 
-    logout() {
-      this.$router.push({ name: "Home" });
+    toggleSideMenu() {
+      console.log(!this.sideMenu);
+      this.sideMenu = !this.sideMenu;
+      this.visibleMeta = !this.visibleMeta;
     },
   },
 

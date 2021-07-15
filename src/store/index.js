@@ -265,19 +265,24 @@ export default new Vuex.Store({
         .update(data);
     },
 
-    logout({ commit }) {
-      firebase
-        .auth()
-        .signOut()
-        .then(() => {
-          commit("SET_LOGGED_IN", false);
-          commit("SET_USER", null);
-          commit("SET_BUDDY", null);
-          commit("SET_UID", null);
-          commit("SET_USERS", null);
-          commit("SET_BUDDY_MESSAGES", null);
-          console.log("Successfully signed out.");
-        });
+    logout({ commit, dispatch }) {
+      dispatch("updateUserStatus", {
+        status: "offline",
+        lastSeen: firebase.firestore.Timestamp.fromDate(new Date()).toDate(),
+      }).then(() => {
+        firebase
+          .auth()
+          .signOut()
+          .then(() => {
+            commit("SET_LOGGED_IN", false);
+            commit("SET_USER", null);
+            commit("SET_BUDDY", null);
+            commit("SET_UID", null);
+            commit("SET_USERS", null);
+            commit("SET_BUDDY_MESSAGES", null);
+            console.log("Successfully signed out.");
+          });
+      });
     },
   },
 });

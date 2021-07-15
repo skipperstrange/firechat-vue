@@ -1,6 +1,5 @@
 <template>
   <div>
-    <BackgroundEffects />
     <div id="frame" class="auth-page">
       <div class="container">
         <div class="row no-gutter">
@@ -51,7 +50,6 @@
 // @ is an alias to /src
 import Login from "@/components/Login.vue";
 import Register from "@/components/Register.vue";
-import BackgroundEffects from "../views/BackgroundEffects.vue";
 import { eventBus } from "../main";
 
 export default {
@@ -59,7 +57,6 @@ export default {
   components: {
     Login,
     Register,
-    BackgroundEffects,
   },
 
   data: () => {

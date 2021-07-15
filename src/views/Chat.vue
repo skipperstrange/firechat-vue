@@ -1,10 +1,7 @@
 <template>
-  <div>
-    <BackgroundEffects />
-    <div id="frame">
-      <users-list />
-      <chat-window />
-    </div>
+  <div id="frame">
+    <users-list />
+    <chat-window />
   </div>
 </template>
 
@@ -12,18 +9,16 @@
 // @ is an alias to /src
 import ChatWindow from "../components/ChatWindow.vue";
 import UsersList from "../components/UsersList.vue";
-import BackgroundEffects from "./BackgroundEffects.vue";
 
 export default {
   name: "Chat",
   components: {
     ChatWindow,
     UsersList,
-    BackgroundEffects,
   },
 };
 
-console.log("Chat screen loaded...")
+console.log("Chat screen loaded...");
 </script>
 
 <style></style>
