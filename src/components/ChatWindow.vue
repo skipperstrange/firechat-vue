@@ -73,7 +73,13 @@
   <div class="no-buddy" v-else>
     <div class="container">
       <img src="../assets/img/undrawQuickChat.svg" />
-      <h2>Select ab buddy to chat</h2>
+      <h2>Select a buddy to chat</h2>
+      <h2>
+        Or
+        <a @click="refresh()"
+          ><i class="fa fa-refresh"></i> Click here to see availible users.</a
+        >
+      </h2>
     </div>
   </div>
 </template>
@@ -181,6 +187,10 @@ export default {
             )
             .goAway(5000);
         });
+    },
+
+    refresh() {
+      this.$store.dispatch("segregateContacts");
     },
 
     ...mapActions(["refreshBuddyMessages"]),
