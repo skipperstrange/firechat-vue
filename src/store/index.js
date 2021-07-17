@@ -175,9 +175,12 @@ export default new Vuex.Store({
     },
 
     async segregateContacts({ state, dispatch, commit }) {
-      await dispatch("refreshUsers").then(() => {
-        dispatch("myHaters").then(() => {
-          dispatch("myBlockedUsers").then(() => {
+      await dispatch("refreshUsers").then((users) => {
+        console.log("users: ", users);
+        dispatch("myHaters").then((haters) => {
+          console.log("haters: ", haters);
+          dispatch("myBlockedUsers").then((locked) => {
+            console.log("blocked: ", locked);
             let tempUsers = [];
             try {
               state.users.forEach((user) => {
@@ -262,10 +265,14 @@ export default new Vuex.Store({
     },
 
     updateUserStatus({ state }, data) {
-      firebase
-        .database()
-        .ref("accounts/" + state.user.data.uid)
-        .update(data);
+      try {
+        firebase
+          .database()
+          .ref("accounts/" + state.user.data.uid)
+          .update(data);
+      } catch (e) {
+        console.log(e.message);
+      }
     },
 
     logout({ commit, dispatch }) {

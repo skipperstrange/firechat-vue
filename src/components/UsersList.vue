@@ -78,16 +78,16 @@
         <i class="fa fa-users fa-fw" aria-hidden="true"></i>
         <span>Contacts</span>
       </button>
-      <button>
+      <button @click="logout()">
         <i class="fa fa-arrow-left fa-fw" aria-hidden="true"></i>
-        <span> <a @click="logout()" style="color: white">Logout</a></span>
+        <span style="color: white">Logout</span>
       </button>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import { eventBus } from "../main";
 import { setTimeout } from "timers";
 
@@ -104,10 +104,6 @@ export default {
       searchString: "",
       buddy: {},
       sideMenu: false,
-      contactsSegregated: {
-        blocked: [],
-        unblocked: [],
-      },
       blockedView: false,
       isBlockedContact: null,
     };
@@ -145,39 +141,47 @@ export default {
     },
   },
 
+  watch: {
+    contacts: function () {
+      this.filteredContacts;
+    },
+  },
+
   computed: {
     // map `this.user` to `this.$store.getters.user`
     ...mapGetters({
       user: "user",
-      contacts: "contacts",
     }),
+
+    ...mapState(["contactsSegregated"]),
 
     filteredContacts: function () {
       var contacts_array;
       if (this.blockedView) {
-        contacts_array = this.contacts.blocked;
+        contacts_array = this.contactsSegregated.blocked;
       } else {
-        contacts_array = this.contacts.unblocked;
+        contacts_array = this.contactsSegregated.unblocked;
       }
       let searchString = this.searchString;
       if (!searchString) {
         return contacts_array;
       }
       searchString = searchString.trim().toLowerCase();
-      contacts_array = contacts_array.filter(function (item) {
-        if (item.displayName.toLowerCase().indexOf(searchString) !== -1) {
-          return item;
-        }
-      });
+      if (contacts_array.length > 0) {
+        contacts_array = contacts_array.filter(function (item) {
+          if (item.displayName.toLowerCase().indexOf(searchString) !== -1) {
+            return item;
+          }
+        });
+      }
       return contacts_array;
     },
   },
 
-  created() {
-    this.$store.dispatch("segregateContacts");
-  },
+  created() {},
 
-  mounted() {
+  async mounted() {
+    this.$store.dispatch("segregateContacts");
     //this.setCurrentChatBuddy(this.buddy);
     eventBus.$on("refreshAllContacts", (buddy) => {
       this.setCurrentChatBuddy(buddy);
