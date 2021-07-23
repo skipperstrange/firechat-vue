@@ -110,8 +110,8 @@ export default new Vuex.Store({
         });
     },
 
-    refreshContacts({ state, dispatch, commit }) {
-      firebase
+     async refreshContacts({ state, dispatch, commit }) {
+      await firebase
         .database()
         .ref("accounts/")
         .orderByChild("displayName")
@@ -128,8 +128,8 @@ export default new Vuex.Store({
                 displayName: c.displayName,
                 photoURL: c.photoURL,
                 status: c.status,
-                blocked: false,
-                hidden: false,
+                blocked: true,
+                hidden: true,
               };
 
               if (
