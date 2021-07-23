@@ -1,16 +1,11 @@
-<template>
-  <div></div>
-</template>
 <script>
 export default {
   name: "Logout",
 
-  mounted() {
-    console.log("Logging out...");
-    this.$store.dispatch("logout").then((success) => {
-      console.log(success);
+  created() {
+    this.$store.dispatch("logout").then(() => {
+      this.$router.replace({ name: "Home" });
     });
-    this.$router.replace({ name: "Home" });
   },
 };
 </script>

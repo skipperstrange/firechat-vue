@@ -87,13 +87,15 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
 import { eventBus } from "../main";
 import { setTimeout } from "timers";
+import { mapGetters } from "vuex";
 
 export default {
   name: "UsersList",
-  props: {},
+  props: {
+    user: {},
+  },
 
   data: () => {
     return {
@@ -141,51 +143,45 @@ export default {
     },
   },
 
-  watch: {
-    contacts: function () {
-      this.filteredContacts;
-    },
-  },
-
   computed: {
-    // map `this.user` to `this.$store.getters.user`
     ...mapGetters({
-      user: "user",
+      contacts: "contacts",
     }),
-
-    ...mapState(["contactsSegregated"]),
 
     filteredContacts: function () {
       var contacts_array;
       if (this.blockedView) {
-        contacts_array = this.contactsSegregated.blocked;
+        contacts_array = this.contacts.blocked;
       } else {
-        contacts_array = this.contactsSegregated.unblocked;
+        contacts_array = this.contacts.unblocked;
       }
       let searchString = this.searchString;
       if (!searchString) {
         return contacts_array;
       }
       searchString = searchString.trim().toLowerCase();
-      if (contacts_array.length > 0) {
-        contacts_array = contacts_array.filter(function (item) {
-          if (item.displayName.toLowerCase().indexOf(searchString) !== -1) {
-            return item;
-          }
-        });
-      }
+      contacts_array = contacts_array.filter(function (item) {
+        if (item.displayName.toLowerCase().indexOf(searchString) !== -1) {
+          return item;
+        }
+      });
       return contacts_array;
     },
   },
 
-  created() {},
+  created() {
+    this.$store.dispatch("refreshContacts");
+  },
 
-  async mounted() {
-    this.$store.dispatch("segregateContacts");
+  mounted() {
+    //console.log(this.contacts.blocked)
+    console.log(this.user);
+    console.log(this.contacts);
     //this.setCurrentChatBuddy(this.buddy);
     eventBus.$on("refreshAllContacts", (buddy) => {
+      console.log(this.contacts);
       this.setCurrentChatBuddy(buddy);
-      this.$store.dispatch("segregateContacts");
+      this.$store.dispatch("refreshContacts");
     });
   },
 };

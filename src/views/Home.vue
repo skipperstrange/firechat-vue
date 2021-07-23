@@ -1,5 +1,7 @@
 <template>
   <div>
+    <BackgroundEffects />
+
     <div class="caption center-block text-center">
       <div class="logos">
         <img src="../assets/img/logo.png" alt="" />
@@ -20,7 +22,7 @@
         </a>
       </p>
 
-      <router-link class="btn btn-success" to="/auth">Sign In</router-link>
+      <router-link class="btn btn-success" to="/auth">Sign In</router-link> |
       <router-link
         class="btn btn-info"
         :to="{ name: 'Auth', query: { loginState: 'reg' } }"
@@ -31,9 +33,12 @@
 </template>
 
 <script scoped>
+import BackgroundEffects from "./BackgroundEffects.vue";
 export default {
   name: "Home",
-  components: {},
+  components: {
+    BackgroundEffects,
+  },
 };
 </script>
 
@@ -43,7 +48,6 @@ export default {
 }
 .btn {
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
-  margin-right: 0.5rem;
 }
 
 .caption a {

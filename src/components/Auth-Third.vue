@@ -1,7 +1,7 @@
 <template>
   <div class="auth0 mb-1">
     <a href="#" @click="loginWithGoogle()"
-      ><i class="fa fa-google"> </i> Login with google</a
+      ><i class="fa fa-google"></i> Login with google</a
     >
   </div>
 </template>

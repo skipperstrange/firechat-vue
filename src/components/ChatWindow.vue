@@ -161,6 +161,7 @@ export default {
         .ref("blockedcontacts/" + this.user.data.uid + "/" + buddy.uid)
         .set({ blocked: true })
         .then(() => {
+          this.updateLastInteraction();
           eventBus.$emit("refreshAllContacts", buddy);
           this.$toasted
             .success(
@@ -178,6 +179,7 @@ export default {
         .ref("blockedcontacts/" + this.user.data.uid + "/" + buddy.uid)
         .set({ blocked: false })
         .then(() => {
+          this.updateLastInteraction();
           eventBus.$emit("refreshAllContacts", buddy);
           this.$toasted
             .info(
@@ -189,8 +191,12 @@ export default {
         });
     },
 
-    refresh() {
-      this.$store.dispatch("segregateContacts");
+    updateLastInteraction() {
+      this.$store.dispatch("updateUserStatus", {
+        lastInteraction: firebase.firestore.Timestamp.fromDate(
+          new Date()
+        ).toDate(),
+      });
     },
 
     ...mapActions(["refreshBuddyMessages"]),
