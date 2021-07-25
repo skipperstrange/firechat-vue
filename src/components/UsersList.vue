@@ -183,10 +183,9 @@ export default {
   created() {},
 
   mounted() {
-    //this.setCurrentChatBuddy(this.buddy);
     eventBus.$on("refreshAllContacts", (buddy) => {
+      buddy.blocked = !buddy.blocked;
       this.setCurrentChatBuddy(buddy);
-      this.$store.dispatch("refreshContacts");
     });
   },
 };

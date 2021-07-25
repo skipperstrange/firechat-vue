@@ -62,8 +62,8 @@ export default new Vuex.Store({
       state.uid = value;
     },
 
-    async SET_CONTACTS(state, contacts) {
-      state.contacts = await contacts;
+    SET_CONTACTS(state, contacts) {
+      state.contacts = contacts;
     },
 
     SET_BUDDY_MESSAGES(state, messages) {

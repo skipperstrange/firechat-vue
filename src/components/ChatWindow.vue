@@ -106,7 +106,6 @@ export default {
 
   mounted() {
     eventBus.$on("buddySelected", (buddy) => {
-      console.log(buddy);
       try {
         this.buddy = buddy;
         this.active = true;
@@ -187,6 +186,7 @@ export default {
             buddy.uid
         )
         .set({ blocked: false })
+
         .then(() => {
           eventBus.$emit("refreshAllContacts", buddy);
           this.$toasted
