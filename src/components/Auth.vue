@@ -14,7 +14,16 @@
               <div class="container">
                 <div class="col-lg-10 col-xl-7 mx-auto">
                   <div v-if="loginView" class="login">
-                    <Login />
+                    <div v-if="passwordReset == false">
+                      <Login />
+                      <div>
+                        <a @click="passwordResetToggle()">Forgot Password?</a>
+                      </div>
+                    </div>
+                    <div v-if="passwordReset == true">
+                      <ForgotPassword />
+                      <div><a @click="passwordResetToggle()">Login</a></div>
+                    </div>
                     Dont have an account?
                     <a
                       href="#"
@@ -50,8 +59,9 @@
 </template>
 
 <script>
-// @ is an alias to /src
+// @ is an alias to /
 import Login from "@/components/Login.vue";
+import ForgotPassword from "@/components/ForgotPassword.vue";
 import Register from "@/components/Register.vue";
 import { eventBus } from "../main";
 
@@ -60,12 +70,20 @@ export default {
   components: {
     Login,
     Register,
+    ForgotPassword,
   },
 
   data: () => {
     return {
       loginView: true,
+      passwordReset: false,
     };
+  },
+
+  methods: {
+    passwordResetToggle() {
+      this.passwordReset = !this.passwordReset;
+    },
   },
 
   mounted() {

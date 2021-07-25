@@ -19,7 +19,7 @@ export default new Vuex.Store({
     blockedUsers: null,
     buddyMessages: null,
     haters: null,
-    contactsSegregated: {
+    contacts: {
       blocked: [],
       unblocked: [],
     },
@@ -32,12 +32,9 @@ export default new Vuex.Store({
     buddy(state) {
       return state.buddy;
     },
-    contacts(state) {
-      return state.contactsSegregated;
-    },
 
-    blockedContacts(state) {
-      return state.blockedUsers;
+    contacts(state) {
+      return state.contacts;
     },
 
     buddyMessages(state) {
@@ -46,10 +43,6 @@ export default new Vuex.Store({
 
     uid(state) {
       return state.uid;
-    },
-
-    haters(state) {
-      return state.haters;
     },
   },
   mutations: {
@@ -69,66 +62,18 @@ export default new Vuex.Store({
       state.uid = value;
     },
 
-    async SET_USERS(state, users) {
-      state.users = await users;
-    },
-
-    SET_CONTACTS(state, contacts) {
-      state.contactsSegregated = contacts;
+    async SET_CONTACTS(state, contacts) {
+      state.contacts = await contacts;
     },
 
     SET_BUDDY_MESSAGES(state, messages) {
       state.buddyMessages = messages;
-    },
-
-    async SET_BLOCKED(state, value) {
-      state.blockedUsers = await value;
-    },
-
-    async SET_HATERS(state, value) {
-      state.haters = await value;
     },
   },
 
   actions: {
     setBuddy({ commit }, buddy) {
       commit("SET_BUDDY", buddy);
-    },
-
-    async myBlockedUsers({ commit, state }) {
-      await firebase
-        .database()
-        .ref("blockedcontacts/" + state.user.data.uid)
-        .on("value", (snapshot) => {
-          let blocked = [];
-          let block = snapshot.val();
-          for (var key in block) {
-            if (block[key].blocked == true) {
-              blocked.push(key);
-            }
-          }
-          commit("SET_BLOCKED", blocked);
-        });
-    },
-
-    async myHaters({ state, commit }) {
-      await firebase
-        .database()
-        .ref("blockedcontacts/")
-        .on("value", (snapshot) => {
-          let haters = [];
-          let hates = snapshot.val();
-          let me = state.uid;
-          for (var key in hates) {
-            if (key !== me) {
-              if (hates[key][me].blocked) {
-                //console.log(key +" has blocked "+me)
-                haters.push(key);
-              }
-            }
-          }
-          commit("SET_HATERS", haters);
-        });
     },
 
     refreshBuddyMessages({ commit, state }, buddy) {
@@ -147,78 +92,81 @@ export default new Vuex.Store({
         });
     },
 
-    async refreshUsers({ commit, state }) {
+    async refreshContacts({ state, commit }) {
+      // console.log("refreshing contacts...");
       await firebase
         .database()
         .ref("accounts/")
-        .orderByChild("displayName")
         .on("value", (snapshot) => {
-          let allContacts = [];
-          snapshot.forEach(function (doc) {
-            let c = doc.val();
-            let contact = {
-              uid: c.userid,
-              displayName: c.displayName,
-              photoURL: c.photoURL,
-              status: c.status,
+          let uid = state.user.data.uid;
+          if (snapshot.exists) {
+            let tmpContacts = [];
+            let contacts = {
+              unblocked: [],
+              blocked: [],
             };
+            let myBlockedContacts = snapshot.val()[uid].blockedcontacts;
 
-            if (
-              contact.uid !== state.user.data.uid
-              // && contact.status === "online"
-            ) {
-              allContacts.push(contact);
-            }
-          });
-          commit("SET_USERS", allContacts);
-        });
-    },
+            snapshot.forEach((childSnapshot) => {
+              // var childKey = childSnapshot.key;
+              var childData = childSnapshot.val();
+              var ghostedContacts = childData.blockedcontacts;
+              let contact = {
+                uid: childData.userid,
+                displayName: childData.displayName,
+                photoURL: childData.photoURL,
+                status: childData.status,
+              };
 
-    async segregateContacts({ state, dispatch, commit }) {
-      await dispatch("refreshUsers").then((users) => {
-        console.log("users: ", users);
-        dispatch("myHaters").then((haters) => {
-          console.log("haters: ", haters);
-          dispatch("myBlockedUsers").then((locked) => {
-            console.log("blocked: ", locked);
-            let tempUsers = [];
-            try {
-              state.users.forEach((user) => {
-                if (state.haters.includes(user.uid)) {
-                  console.log(user.displayName + " has blocked me");
+              try {
+                if (
+                  myBlockedContacts[contact.uid] &&
+                  myBlockedContacts[contact.uid].blocked == true
+                ) {
+                  contact.blocked = true;
                 } else {
-                  tempUsers.push(user);
+                  contact.blocked = false;
                 }
-              });
-            } catch (e) {
-              console.log(e);
-            }
+              } catch (e) {
+                contact.blocked = false;
+              }
 
-            let blocked = [];
-            let unblocked = [];
-            tempUsers.forEach(function (profile) {
-              if (state.blockedUsers.includes(profile.uid)) {
-                profile.blocked = true;
-                blocked.push(profile);
-              } else {
-                profile.blocked = false;
-                unblocked.push(profile);
+              try {
+                if (
+                  ghostedContacts[uid] &&
+                  ghostedContacts[uid].blocked == true
+                ) {
+                  contact.hidden = true;
+                }
+              } catch (e) {
+                // console.log();
+              }
+              tmpContacts.push(contact);
+            });
+
+            tmpContacts.forEach((profile) => {
+              if (profile.uid !== uid) {
+                if (profile.hidden == true) {
+                  //  console.log("ghosted")
+                } else {
+                  if (profile.blocked == true) {
+                    contacts.blocked.push(profile);
+                  }
+                  if (profile.blocked == false) {
+                    contacts.unblocked.push(profile);
+                  }
+                }
               }
             });
-            let d = {};
-            d.blocked = blocked;
-            d.unblocked = unblocked;
-            commit("SET_CONTACTS", d);
-          });
+            commit("SET_CONTACTS", contacts);
+          }
         });
-      });
     },
 
     authCheck({ commit, dispatch }) {
       firebase.auth().onAuthStateChanged((user) => {
         commit("SET_LOGGED_IN", false);
         commit("SET_UID", null);
-        commit("SET_USERS", null);
         commit("SET_BUDDY_MESSAGES", null);
         if (user) {
           commit("SET_LOGGED_IN", true);
@@ -238,33 +186,34 @@ export default new Vuex.Store({
               };
               commit("SET_USER", userDetails);
             });
-          dispatch("updateUserStatus", {
+          dispatch("updateUser", {
             status: "online",
             lastSeen: firebase.firestore.Timestamp.fromDate(
               new Date()
             ).toDate(),
           });
         } else {
-          dispatch("updateUserStatus", {
+          dispatch("updateUser", {
             status: "offline",
             lastSeen: firebase.firestore.Timestamp.fromDate(
               new Date()
             ).toDate(),
           });
-          commit("SET_LOGGED_IN", false);
-          commit("SET_USER", null);
-          commit("SET_BUDDY", null);
-          commit("SET_UID", null);
-          commit("SET_HATERS", null);
-          commit("SET_USERS", null);
-          commit("SET_BLOCKED", null);
-          commit("SET_CONTACTS", null);
-          commit("SET_BUDDY_MESSAGES", null);
+          dispatch("logout");
         }
       });
     },
 
-    updateUserStatus({ state }, data) {
+    resetState({ commit }) {
+      commit("SET_LOGGED_IN", false);
+      commit("SET_USER", null);
+      commit("SET_BUDDY", null);
+      commit("SET_UID", null);
+      commit("SET_CONTACTS", null);
+      commit("SET_BUDDY_MESSAGES", null);
+    },
+
+    updateUser({ state }, data) {
       try {
         firebase
           .database()
@@ -275,8 +224,8 @@ export default new Vuex.Store({
       }
     },
 
-    logout({ commit, dispatch }) {
-      dispatch("updateUserStatus", {
+    logout({ dispatch }) {
+      dispatch("updateUser", {
         status: "offline",
         lastSeen: firebase.firestore.Timestamp.fromDate(new Date()).toDate(),
       });
@@ -285,15 +234,7 @@ export default new Vuex.Store({
         .signOut()
         .then(() => {
           console.log("Clearing user session");
-          commit("SET_LOGGED_IN", false);
-          commit("SET_USER", null);
-          commit("SET_BUDDY", null);
-          commit("SET_UID", null);
-          commit("SET_HATERS", null);
-          commit("SET_USERS", null);
-          commit("SET_BLOCKED", null);
-          commit("SET_CONTACTS", null);
-          commit("SET_BUDDY_MESSAGES", null);
+          dispatch("resetState");
           console.log("Successfully signed out.");
         });
     },

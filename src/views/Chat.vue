@@ -1,6 +1,6 @@
 <template>
   <div id="frame">
-    <users-list />
+    <users-list :user="user" />
     <chat-window />
   </div>
 </template>
@@ -9,6 +9,7 @@
 // @ is an alias to /src
 import ChatWindow from "../components/ChatWindow.vue";
 import UsersList from "../components/UsersList.vue";
+import { mapGetters } from "vuex";
 
 export default {
   name: "Chat",
@@ -18,6 +19,12 @@ export default {
   },
 
   mounted() {},
+
+  computed: {
+    ...mapGetters({
+      user: "user",
+    }),
+  },
 };
 
 console.log("Chat screen loaded...");

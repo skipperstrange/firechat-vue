@@ -58,7 +58,7 @@ export default {
           this.$toasted.success("Please wait to enter chat room.").goAway(3000);
           setTimeout(() => {
             this.$router.push({ name: "Chat" });
-          }, 3000);
+          }, 500);
         })
         .catch((err) => {
           console.log(err);

@@ -87,13 +87,15 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
 import { eventBus } from "../main";
 import { setTimeout } from "timers";
+import { mapGetters } from "vuex";
 
 export default {
   name: "UsersList",
-  props: {},
+  props: {
+    user: {},
+  },
 
   data: () => {
     return {
@@ -137,7 +139,7 @@ export default {
       this.$store.dispatch("logout");
       setTimeout(() => {
         this.$router.replace({ name: "Home" });
-      }, 3000);
+      }, 500);
     },
   },
 
@@ -148,31 +150,31 @@ export default {
   },
 
   computed: {
-    // map `this.user` to `this.$store.getters.user`
     ...mapGetters({
-      user: "user",
+      contacts: "contacts",
     }),
-
-    ...mapState(["contactsSegregated"]),
 
     filteredContacts: function () {
       var contacts_array;
-      if (this.blockedView) {
-        contacts_array = this.contactsSegregated.blocked;
-      } else {
-        contacts_array = this.contactsSegregated.unblocked;
-      }
-      let searchString = this.searchString;
-      if (!searchString) {
-        return contacts_array;
-      }
-      searchString = searchString.trim().toLowerCase();
-      if (contacts_array.length > 0) {
-        contacts_array = contacts_array.filter(function (item) {
-          if (item.displayName.toLowerCase().indexOf(searchString) !== -1) {
-            return item;
-          }
-        });
+
+      if (this.contacts) {
+        if (this.blockedView) {
+          contacts_array = this.contacts.blocked;
+        } else {
+          contacts_array = this.contacts.unblocked;
+        }
+        let searchString = this.searchString;
+        if (!searchString) {
+          return contacts_array;
+        }
+        searchString = searchString.trim().toLowerCase();
+        if (contacts_array.length > 0) {
+          contacts_array = contacts_array.filter(function (item) {
+            if (item.displayName.toLowerCase().indexOf(searchString) !== -1) {
+              return item;
+            }
+          });
+        }
       }
       return contacts_array;
     },
@@ -180,12 +182,11 @@ export default {
 
   created() {},
 
-  async mounted() {
-    this.$store.dispatch("segregateContacts");
+  mounted() {
     //this.setCurrentChatBuddy(this.buddy);
     eventBus.$on("refreshAllContacts", (buddy) => {
       this.setCurrentChatBuddy(buddy);
-      this.$store.dispatch("segregateContacts");
+      this.$store.dispatch("refreshContacts");
     });
   },
 };

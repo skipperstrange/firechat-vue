@@ -5,17 +5,14 @@
       <p>{{ buddy.displayName }}</p>
 
       <span
-        v-if="buddy.blocked == false"
-        class="ban"
-        title="Block this contact."
-        ><a @click="blockContact(buddy)"><i class="fa fa-ban"></i></a
-      ></span>
-      <span
         v-if="buddy.blocked == true"
         class="ban"
         style="color: red"
         title="Unblock this contact."
         ><a @click="unblockContact(buddy)"><i class="fa fa-ban"></i></a
+      ></span>
+      <span v-else class="ban" title="Block this contact."
+        ><a @click="blockContact(buddy)"><i class="fa fa-ban"></i></a
       ></span>
     </div>
     <div class="messages" v-if="messages" v-chat-scroll="{ enable: true }">
@@ -109,6 +106,7 @@ export default {
 
   mounted() {
     eventBus.$on("buddySelected", (buddy) => {
+      console.log(buddy);
       try {
         this.buddy = buddy;
         this.active = true;
@@ -158,7 +156,13 @@ export default {
     blockContact(buddy) {
       firebase
         .database()
-        .ref("blockedcontacts/" + this.user.data.uid + "/" + buddy.uid)
+        .ref(
+          "accounts/" +
+            this.user.data.uid +
+            "/" +
+            "blockedcontacts/" +
+            buddy.uid
+        )
         .set({ blocked: true })
         .then(() => {
           eventBus.$emit("refreshAllContacts", buddy);
@@ -175,7 +179,13 @@ export default {
     unblockContact(buddy) {
       firebase
         .database()
-        .ref("blockedcontacts/" + this.user.data.uid + "/" + buddy.uid)
+        .ref(
+          "accounts/" +
+            this.user.data.uid +
+            "/" +
+            "blockedcontacts/" +
+            buddy.uid
+        )
         .set({ blocked: false })
         .then(() => {
           eventBus.$emit("refreshAllContacts", buddy);
@@ -188,11 +198,6 @@ export default {
             .goAway(5000);
         });
     },
-
-    refresh() {
-      this.$store.dispatch("segregateContacts");
-    },
-
     ...mapActions(["refreshBuddyMessages"]),
   },
 

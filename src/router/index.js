@@ -40,6 +40,10 @@ const routes = [
       if (store.getters.user.loggedIn === false) {
         next("/home");
       } else {
+        store.dispatch("refreshContacts").then(() => {
+          console.log(store.getters.contacts);
+          next();
+        });
         next();
       }
     },
