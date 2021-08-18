@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@braid/vue-formulate": "^2.5.2",
+    "@melmacaluso/vue-modal": "^2.1.0",
     "animate.css": "^4.1.1",
     "bootstrap": "^5.0.1",
     "core-js": "^3.6.5",
