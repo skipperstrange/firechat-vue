@@ -1,5 +1,7 @@
 # firechat-vue
 
+## [Demo Link](http://fire-chat-vue.herokuapp.com/)
+
 ## Project setup
 
 ### Addintional configuratins
